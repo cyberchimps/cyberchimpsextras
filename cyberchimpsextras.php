@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Cyberchimpsextras
+Plugin Name: Cyberchimps Extras
 Plugin URI: http://cyberchimps.com
-Description: Added functionality for Cyberchimps themes
+Description: ** WARNING ** Only works for CyberChimps themes found on <a href="http://profiles.wordpress.org/cyberchimps/" title="CyberChimps Themes">Wordpress.org</a>. Adds Google Analytics to your theme's options
 Version: 1.0.0
 Author: CyberChimps
 Author URI: http://www.cyberchimps.com
@@ -24,7 +24,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-if( !class_exists( 'cyberchimpsextras' ) ) {
+if ( !class_exists( 'cyberchimpsextras' ) ) {
 	class cyberchimpsextras {
 
 		public $options;
@@ -45,39 +45,46 @@ if( !class_exists( 'cyberchimpsextras' ) ) {
 
 		/**
 		 * Clean up after Deactivation
+		 *
+		 * set google analytics option to empty
 		 */
 		public static function deactivate() {
-		// TODO we need to delete the Google analytics option from the cyberchimps options when the plugin is deleted
 
+			$cyberchimps_options = get_option( 'cyberchimps_options' );
+
+			if ( isset( $cyberchimps_options['google_analytics'] ) ) {
+				$cyberchimps_options['google_analytics'] = '';
+			}
+
+			update_option( 'cyberchimps_options', $cyberchimps_options );
 		}
 
 		/**
 		 * Hook into WP admin_init
 		 */
 		public function admin_init() {
-		
+
 			// Check of the theme is from CyberChimps
-			if( $this->is_cyberchimps() ) {
-			
+			if ( $this->is_cyberchimps() ) {
+
 				// Add filter to add extra options into theme options.
 				add_filter( 'cyberchimps_field_list', array( &$this, 'cyberchimpsextras_options' ), 10, 1 );
 			}
 		}
-		
+
 		/**
 		 * Test to see if the current theme is from Cyberchimps but not Responsive or Resposnive Pro.
 		 *
 		 * @return bool
 		 */
 		public static function is_cyberchimps() {
-		
+
 			// Get the theme object.
 			$theme = wp_get_theme();
-			
-			if( 'CyberChimps' == $theme->get( 'Author' ) && !( 'Responsive' == $theme->Name || 'Responsive Pro' == $theme->Name ) ) {
+
+			if ( 'CyberChimps' == $theme->get( 'Author' ) && !( 'Responsive' == $theme->Name || 'Responsive Pro' == $theme->Name ) ) {
 				return true;
-			}
-			else {
+			} else {
 				return false;
 			}
 		}
@@ -109,13 +116,13 @@ if( !class_exists( 'cyberchimpsextras' ) ) {
 		public function cyberchimps_head() {
 
 			// Test if using CyberChimps theme. If yes load from CyberChimps options else load from plugin options
-			if( $this->is_cyberchimps() ) {
-		
+			if ( $this->is_cyberchimps() ) {
+
 				// Get google analytics code.
 				$code = cyberchimps_get_option( 'google_analytics', '' );
-				
+
 				// Check if the code is not empty then add it.
-				if( $code != '' ) {
+				if ( $code != '' ) {
 					echo '<script type="text/javascript">' . $code . '</script>';
 				}
 			}
@@ -127,7 +134,7 @@ if( !class_exists( 'cyberchimpsextras' ) ) {
  * Initialize Plugin
  */
 
-if( class_exists( 'cyberchimpsextras' ) ) {
+if ( class_exists( 'cyberchimpsextras' ) ) {
 
 	// Installation and uninstallation hooks
 	register_activation_hook( __FILE__, array( 'cyberchimpsextras', 'activate' ) );
@@ -137,7 +144,7 @@ if( class_exists( 'cyberchimpsextras' ) ) {
 	$cyberchimpsextras = new cyberchimpsextras();
 }
 
-if( isset( $cyberchimpsextras ) ) {
+if ( isset( $cyberchimpsextras ) ) {
 	/**
 	 * Add settings link to plugin activate page
 	 *
@@ -146,6 +153,7 @@ if( isset( $cyberchimpsextras ) ) {
 	 * @return mixed
 	 */
 	function cyberchimps_plugin_settings_link( $links ) {
+
 		$settings_link = '<a href="themes.php?page=cyberchimps-theme-options">Settings</a>';
 		array_unshift( $links, $settings_link );
 
@@ -153,5 +161,5 @@ if( isset( $cyberchimpsextras ) ) {
 	}
 
 	$plugin = plugin_basename( __FILE__ );
-	add_filter( "plugin_action_links_$plugin", 'plugin_settings_link' );
+	add_filter( "plugin_action_links_$plugin", 'cyberchimps_plugin_settings_link' );
 }
