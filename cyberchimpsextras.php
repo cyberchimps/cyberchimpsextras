@@ -47,6 +47,8 @@ if( !class_exists( 'cyberchimpsextras' ) ) {
 		 * Clean up after Deactivation
 		 */
 		public static function deactivate() {
+		// TODO we need to delete the Google analytics option from the cyberchimps options when the plugin is deleted
+
 		}
 
 		/**
@@ -143,7 +145,7 @@ if( isset( $cyberchimpsextras ) ) {
 	 *
 	 * @return mixed
 	 */
-	function plugin_settings_link( $links ) {
+	function cyberchimps_plugin_settings_link( $links ) {
 		$settings_link = '<a href="themes.php?page=cyberchimps-theme-options">Settings</a>';
 		array_unshift( $links, $settings_link );
 
